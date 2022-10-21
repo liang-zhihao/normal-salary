@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container pd-3" style="width: 50vw; height: 50vw;">
+        <h1 class="text-center">点密度工作室设计分成计算器</h1>
+        <div id="container" class="col-md-offset-4 col-lg-offset-4col-xl-offset-4" width="50%">
+            <div class="mb-3">
+                <label class="form-label">项目总金额</label>
+                <input type="number" class="form-control" id="totalAmount" placeholder="元">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">业务人员</label>
+                <input type="text" class="form-control" id="masterName" placeholder="姓名">
+            </div>
+            <!-- <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+            </div> -->
+            <div id="designerContainer"></div>
+
+            <button id="calBtn" class="btn btn-primary">计算</button>
+            <div id="result"></div>
+
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">姓名</th>
+                        <th scope="col">金额</th>
+                        <th scope="col">百分比</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+
+        // let ret = prompt('请输入设计师人数', 1);
+        let ret = 2
+        for (let i = 0; i < ret; i++) {
+            $("#designerContainer").append(`
+            <span class="form-label">设计师${i + 1}</span>
+            <div class="input-group mb-3">
+                <input id="designerName${i + 1}" type="text" class="form-control" placeholder="姓名" aria-label="Username">
+                <input id="designerProportion${i + 1}" type="number" min="1" max="100" class="form-control" placeholder="百分比" >
+                <span class="input-group-text">%</span>
+            </div>`);
+        }
+
+        $(document).on("click", "button", function (e) {
+            e.preventDefault();
+            total_amount = $('#totalAmount').val()
+            total_amount = Number(total_amount * 1.0)
+            let company_amount = total_amount * 0.3
+            let remaining_amount = total_amount * 0.7
+            let master = $('#masterName').val()
+            let master_amount = remaining_amount * 0.1
+            remaining_amount = remaining_amount * 0.9
+            let designers = []
+            let designers_num = ret
+            for (let i = 0; i < designers_num; i++) {
+                let designer_proportion = $(`#designerProportion${(i + 1)}`).val()
+                let designer_amount = remaining_amount * designer_proportion * 0.01
+                let designer_name = $(`#designerName${(i + 1)}`).val()
+                designers.push({ 'name': designer_name, 'proportion': designer_proportion, 'amount': designer_amount })
+            }
+            let table_body = ''
+            for (let i = 0; i < designers.length; i++) {
+                let amount = designers[i]['amount']
+                let proportion = designers[i]['proportion']
+                table_body +=
+                    `
+                    <tr>
+                        <th scope="row">${i + 1}</th>
+                        <td>${designers[i]['name']}</td>
+                        <td>${amount.toFixed(2)}元</td>
+                        <td>${proportion}%</td>
+                    </tr>
+            `
+
+            }
+            let result_body =
+                `
+            <div class="mt-5">
+                <h2>结果</h1>
+                <h3>项目总金额：${Number(total_amount.toFixed(2))}元</h3>
+                <h3>公司分成：${company_amount.toFixed(2)}元</h3>
+                <h3>业务人员${master}分成：${master_amount.toFixed(2)}元</h3>
+                <h3>设计师分成：</h3>
+            </div>
+            `
+            $("#tbody").html(table_body)
+            $("#result").html(result_body)
+            console.log(company_amount);
+            console.log(master_amount);
+            console.log(designers);
+        })
+
+    </script>
+</body>
+
+</html>
